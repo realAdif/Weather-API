@@ -1,0 +1,9 @@
+h1{
+    text-align: center;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    padding: 20px;
+    background: rgb(34,193,195);
+    width: 100%;
+    background: linear-gradient(180deg, rgba(34,193,195,1) 0%, rgba(253,187,45,1) 100%);
+}
