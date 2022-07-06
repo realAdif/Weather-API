@@ -6,23 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <title>Weather Dashboard</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
 </head>
 <body>
     <h1>Weather Dashboard</h1>
     
 
     <section class="search-box">
-        <h2>search For a City</h2>
-        <input class="search-bar" type="search">
-        <input class="search-button" type="button" value="Search">
+        <h2>Search for a city</h2>
+        <input class="search-bar" id="search-states" type="search">
+        <br>
+        <input class="search-button" id="searchButton" type="button" value="Search">
     </section>
 
     <section class="current-weather">
-        <h2>Weather Country (Date)</h2>
-        <div>Temp:</div>
-        <div>Wind:</div>
-        <div>Humidity:</div>
-        <div>UV Index:</div>
+        <h2 id="wathercountry">Weather Country (Date)</h2>
+        <div>Temp: <span id="temp-id"></span>&#8451; </div>
+        <div>Wind: <span id="wind-id"></span></div>
+        <div>Humidity: <span id="humidity-id"></span></div>
+        <div>UV Index: <span id="UVIndex-id"></span></div>
+    </section>
+    <section id="history-botton" class="history">
+    <h2>History</h1>
+        <button id="history-value" class="history-block" value="sydney">Sydney</button>
         
     </section>
 
