@@ -15,11 +15,12 @@ var fiveDayCastEl = document.querySelector("#rows");
 
 
 searchButtonEl.addEventListener("click",function(){
-    
+    var timeClick = 0;
     if(searchStatesEl.value === ""){
         alert("error");
     }
     else{
+       
         console.log(searchStatesEl.value);
         var buttonEl = document.createElement("button");
         buttonEl.setAttribute("id","history-value");
@@ -38,33 +39,44 @@ searchButtonEl.addEventListener("click",function(){
                 .then(function(r){
                     r.json()
                     .then(function(data){
+                        timeClick++;
+                        console.log(timeClick);
                         console.log(data);
                         console.log(data.daily[0]);
-                        for(let i = 0; i<= 4; i++){
-                            let daysOfWeather = document.createElement("div");
-                            daysOfWeather.setAttribute("class", "days");
+                        if(timeClick === 1){
+                            for(let i = 0; i<= 4; i++){
+                            
 
-                            let dayDate =  document.createElement("h3")
-                            let dayTemp =  document.createElement("div");
-                            let dayWind =  document.createElement("div");
-                            let dayHumidity =  document.createElement("div");
-
-                            let date = data.daily[i].dt
-                            let time = moment.unix(date);
-                           
-                            console.log(data.daily[i].temp.day)
-                            dayDate.innerText =  time.format("DD/MM/YYYY")
-                            dayTemp.innerHTML = 'Temp: ' + data.daily[i].temp.day;
-                            dayWind.innerHTML = 'Wind: '+ data.daily[i].wind_speed;
-                            dayHumidity.innerHTML = 'Humidity: '+data.daily[i].humidity;
-
-                            fiveDayCastEl.appendChild(daysOfWeather);
-                            daysOfWeather.appendChild(dayDate);
-                            daysOfWeather.appendChild(dayTemp);
-                            daysOfWeather.appendChild(dayWind);
-                            daysOfWeather.appendChild(dayHumidity);
-
+                                var daysOfWeather = document.createElement("div");
+                                daysOfWeather.setAttribute("class", "days");
+    
+                                var dayDate =  document.createElement("h3")
+                                var dayTemp =  document.createElement("div");
+                                var dayWind =  document.createElement("div");
+                                var dayHumidity =  document.createElement("div");
+    
+                                var date = data.daily[i].dt
+                                var time = moment.unix(date);
+                               
+                                console.log(data.daily[i].temp.day)
+                                dayDate.innerText =  time.format("DD/MM/YYYY")
+                                dayTemp.innerHTML = 'Temp: ' + data.daily[i].temp.day;
+                                dayWind.innerHTML = 'Wind: '+ data.daily[i].wind_speed;
+                                dayHumidity.innerHTML = 'Humidity: '+data.daily[i].humidity;
+    
+       
+                                
+                                fiveDayCastEl.appendChild(daysOfWeather);
+                                daysOfWeather.appendChild(dayDate);
+                                daysOfWeather.appendChild(dayTemp);
+                                daysOfWeather.appendChild(dayWind);
+                                daysOfWeather.appendChild(dayHumidity);
+    
+                            }
+                        }else{
+                            fiveDayCastEl.remove()
                         }
+                        
                         
                         if(data.current.weather[0].id <= 232){ // Thuderstorm
                             watherCountryEL.innerHTML = data.timezone+" &#x263C;";
