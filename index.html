@@ -8,6 +8,10 @@
     <title>Weather Dashboard</title>
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    <script
+    type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"
+  ></script>
 </head>
 <body>
     <h1>Weather Dashboard</h1>
@@ -27,13 +31,21 @@
         <div>Humidity: <span id="humidity-id"></span></div>
         <div>UV Index: <span id="UVIndex-id"></span></div>
     </section>
+   
     <section id="history-botton" class="history">
     <h2>History</h1>
         <button id="history-value" class="history-block" value="sydney">Sydney</button>
-        
     </section>
 
-
+    <section id="five-Day" class="five-Day">
+        <h2>5-Day Forecast:</h2>
+        <div id="rows" class="row">
+            
+        </div>
+        
+        
+    </section>
+    
     <script src="script.js"></script>
 </body>
 </html>
