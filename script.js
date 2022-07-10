@@ -6,106 +6,126 @@ var HumidityEl = document.querySelector("#humidity-id");
 var uvIndexEl = document.querySelector("#UVIndex-id");
 var watherCountryEL = document.querySelector("#wathercountry");
 var historyEl = document.querySelector("#history-botton");
-var historyButtonEl = document.querySelector("#history-value");
 var fiveDayCastEl = document.querySelector("#rows");
-
-// var time = moment.unix(1657242000);
-// console.log(time)
-// console.log(time.format("MM/DD/YYYY"));
 
 
 searchButtonEl.addEventListener("click",function(){
-    var timeClick = 0;
+
     if(searchStatesEl.value === ""){
         alert("error");
     }
     else{
-       
-        console.log(searchStatesEl.value);
+        weatherAPI(searchStatesEl.value);
+    }
+})
+
+var historyButtonList = JSON.parse(localStorage.getItem("historyList"));
+console.log(historyButtonList);
+if(historyButtonList === null){
+    historyButtonList = [];
+}else{
+    historyButtonList.forEach(function(element){
         var buttonEl = document.createElement("button");
-        buttonEl.setAttribute("id","history-value");
-        buttonEl.setAttribute("class","history-block");        
-        buttonEl.setAttribute("value",searchStatesEl.value);
-        buttonEl.innerHTML = searchStatesEl.value;
+        buttonEl.setAttribute("id",element);
+        buttonEl.setAttribute("class","history-button");        
+        buttonEl.innerHTML = element;
         historyEl.appendChild(buttonEl)
+    })
     
-        fetch ("https://us1.locationiq.com/v1/search?key=pk.ae433c8853239ce92c2541b70655a352&q="+searchStatesEl.value+"&format=json")
+}
+
+
+function weatherAPI(search){
+    fetch ("https://us1.locationiq.com/v1/search?key=pk.ae433c8853239ce92c2541b70655a352&q="+search+"&format=json")
         .then(function(r){
             r.json()
-            .then(function(data){ 
+            .then(function(data){
+                console.log(data)
                 let lat = data[0].lat;
-                let lon = data[0].lon;              
+                let lon = data[0].lon;
+                            
                 fetch("https://api.openweathermap.org/data/2.5/onecall?lat="+lat+"&lon="+lon+"&units=metric&appid=ef96933f0b3e6caee107572378646593")
                 .then(function(r){
                     r.json()
                     .then(function(data){
-                        timeClick++;
-                        console.log(timeClick);
-                        console.log(data);
-                        console.log(data.daily[0]);
-                        if(timeClick === 1){
-                            for(let i = 0; i<= 4; i++){
-                            
-
-                                var daysOfWeather = document.createElement("div");
-                                daysOfWeather.setAttribute("class", "days");
-    
-                                var dayDate =  document.createElement("h3")
-                                var dayTemp =  document.createElement("div");
-                                var dayWind =  document.createElement("div");
-                                var dayHumidity =  document.createElement("div");
-    
-                                var date = data.daily[i].dt
-                                var time = moment.unix(date);
-                               
-                                console.log(data.daily[i].temp.day)
-                                dayDate.innerText =  time.format("DD/MM/YYYY")
-                                dayTemp.innerHTML = 'Temp: ' + data.daily[i].temp.day;
-                                dayWind.innerHTML = 'Wind: '+ data.daily[i].wind_speed;
-                                dayHumidity.innerHTML = 'Humidity: '+data.daily[i].humidity;
-    
-       
-                                
-                                fiveDayCastEl.appendChild(daysOfWeather);
-                                daysOfWeather.appendChild(dayDate);
-                                daysOfWeather.appendChild(dayTemp);
-                                daysOfWeather.appendChild(dayWind);
-                                daysOfWeather.appendChild(dayHumidity);
-    
+                        console.log(searchStatesEl.value);
+                       
+                        let found = false;
+                        historyButtonList.forEach(function(element){
+                           
+                            if(element === searchStatesEl.value){
+                                found = true
                             }
-                        }else{
-                            fiveDayCastEl.remove()
+                           
+                        })   
+                        if(found === false){
+                            historyButtonList.push(searchStatesEl.value);
+                            localStorage.setItem("historyList",JSON.stringify(historyButtonList));
+                            var buttonEl = document.createElement("button");
+                            buttonEl.setAttribute("id",searchStatesEl.value);
+                            buttonEl.setAttribute("class","history-button");        
+                            buttonEl.innerHTML = searchStatesEl.value;
+                            historyEl.appendChild(buttonEl)
                         }
-                        
-                        
+                        fiveDayCastEl.innerHTML = "";
+                        for(let i = 0; i<= 4; i++){
+
+                            var daysOfWeather = document.createElement("div");
+                            daysOfWeather.setAttribute("class", "days");
+
+                            var dayDate =  document.createElement("h3")
+                            var dayTemp =  document.createElement("div");
+                            var dayWind =  document.createElement("div");
+                            var dayHumidity =  document.createElement("div");
+
+                            var date = data.daily[i].dt
+                            var time = moment.unix(date);
+
+                            dayDate.innerText =  time.format("DD/MM/YYYY")
+                            dayTemp.innerHTML = 'Temp: ' + data.daily[i].temp.day;
+                            dayWind.innerHTML = 'Wind: '+ data.daily[i].wind_speed;
+                            dayHumidity.innerHTML = 'Humidity: '+data.daily[i].humidity;
+
+   
+                            
+                            fiveDayCastEl.appendChild(daysOfWeather);
+                            daysOfWeather.appendChild(dayDate);
+                            daysOfWeather.appendChild(dayTemp);
+                            daysOfWeather.appendChild(dayWind);
+                            daysOfWeather.appendChild(dayHumidity);
+
+                        }
+                    
                         if(data.current.weather[0].id <= 232){ // Thuderstorm
                             watherCountryEL.innerHTML = data.timezone+" &#x263C;";
                         }else if(data.current.weather[0].id <= 321){ // Drizzle
-
+                            watherCountryEL.innerHTML = data.timezone+"	&#x26C8;";
                         }else if(data.current.weather[0].id <= 521){ // Rain
-                            
+                            watherCountryEL.innerHTML = data.timezone+"	&#x1F327;";
                         }else if(data.current.weather[0].id <= 622){ // Snow
-                            
+                            watherCountryEL.innerHTML = data.timezone+"&#x2603;";
                         }else if(data.current.weather[0].id <= 781){ // Atmohere
-                            
+                            watherCountryEL.innerHTML = data.timezone+"&#x1F32B;";
                         }else if(data.current.weather[0].id === 800){ // clear
                             watherCountryEL.innerHTML = data.timezone+" &#x263C;";
                         }else if(data.current.weather[0].id <= 804){// Clouds
-                            
+                            watherCountryEL.innerHTML = data.timezone+" &#x2601;";
                         }
 
                         tempEl.innerHTML = Math.floor(data.current.temp);
                         windEl.innerHTML = data.current.wind_speed;
                         HumidityEl.innerHTML = data.current.humidity;
-                        uvIndexEl.innerHTML = data.current.uvi
-
-                        
+                        uvIndexEl.innerHTML = data.current.uvi;
+                        console.log(data.current.uvi);                      
                     })
                 })
             })
         })
-    }
-})
-historyButtonEl.addEventListener("click",function(){
-    console.log(historyButtonEl)
+}
+
+historyEl.addEventListener("click",function(event){
+    
+    historyB = event.target.id;
+    console.log(historyB);
+    weatherAPI(historyB)
 })
