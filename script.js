@@ -7,7 +7,8 @@ var uvIndexEl = document.querySelector("#UVIndex-id");
 var watherCountryEL = document.querySelector("#wathercountry");
 var historyEl = document.querySelector("#history-botton");
 var fiveDayCastEl = document.querySelector("#rows");
-
+var historyButtonList = JSON.parse(localStorage.getItem("historyList"));
+addButton();
 
 searchButtonEl.addEventListener("click",function(){
 
@@ -19,31 +20,20 @@ searchButtonEl.addEventListener("click",function(){
     }
 })
 
-var historyButtonList = JSON.parse(localStorage.getItem("historyList"));
-console.log(historyButtonList);
-if(historyButtonList === null){
-    historyButtonList = [];
-}else{
-    historyButtonList.forEach(function(element){
-        var buttonEl = document.createElement("button");
-        buttonEl.setAttribute("id",element);
-        buttonEl.setAttribute("class","history-button");        
-        buttonEl.innerHTML = element;
-        historyEl.appendChild(buttonEl)
-    })
-    
-}
+$('#search-states').on("keypress",function(event){
+    if(event.keyCode === 13){
+        
+    }
+});
 
 
 function weatherAPI(search){
     fetch ("https://us1.locationiq.com/v1/search?key=pk.ae433c8853239ce92c2541b70655a352&q="+search+"&format=json")
         .then(function(r){
             r.json()
-            .then(function(data){
-                console.log(data)
+            .then(function(data){              
                 let lat = data[0].lat;
-                let lon = data[0].lon;
-                            
+                let lon = data[0].lon;                           
                 fetch("https://api.openweathermap.org/data/2.5/onecall?lat="+lat+"&lon="+lon+"&units=metric&appid=ef96933f0b3e6caee107572378646593")
                 .then(function(r){
                     r.json()
@@ -59,13 +49,15 @@ function weatherAPI(search){
                            
                         })   
                         if(found === false){
+                            if (!historyButtonList.includes(search)){
+                                var buttonEl = document.createElement("button");
+                                buttonEl.setAttribute("id",searchStatesEl.value);
+                                buttonEl.setAttribute("class","history-button");        
+                                buttonEl.innerHTML = searchStatesEl.value;
+                                historyEl.appendChild(buttonEl)  
+                            }
                             historyButtonList.push(searchStatesEl.value);
                             localStorage.setItem("historyList",JSON.stringify(historyButtonList));
-                            var buttonEl = document.createElement("button");
-                            buttonEl.setAttribute("id",searchStatesEl.value);
-                            buttonEl.setAttribute("class","history-button");        
-                            buttonEl.innerHTML = searchStatesEl.value;
-                            historyEl.appendChild(buttonEl)
                         }
                         fiveDayCastEl.innerHTML = "";
                         for(let i = 0; i<= 4; i++){
@@ -115,8 +107,7 @@ function weatherAPI(search){
                         tempEl.innerHTML = Math.floor(data.current.temp);
                         windEl.innerHTML = data.current.wind_speed;
                         HumidityEl.innerHTML = data.current.humidity;
-                        uvIndexEl.innerHTML = data.current.uvi;
-                        console.log(data.current.uvi);                      
+                        uvIndexEl.innerHTML = data.current.uvi;                    
                     })
                 })
             })
@@ -124,8 +115,28 @@ function weatherAPI(search){
 }
 
 historyEl.addEventListener("click",function(event){
-    
-    historyB = event.target.id;
-    console.log(historyB);
+    historyB = event.target.id;  
     weatherAPI(historyB)
 })
+
+function addButton(){
+    
+    console.log(historyButtonList);
+    if(historyButtonList === null){
+        historyButtonList = [];
+    }else{
+        historyButtonList.filter((el)=>el != "");
+        historyButtonList.forEach(function(element){
+            console.log(element);
+            if(element.length > 1){
+                var buttonEl = document.createElement("button");
+                buttonEl.setAttribute("id",element);
+                buttonEl.setAttribute("class","history-button");        
+                buttonEl.innerHTML = element;
+                historyEl.appendChild(buttonEl)
+            }
+            
+        })
+        
+    }
+}
